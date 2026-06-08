@@ -1,0 +1,41 @@
+# Compiled binary
+tdgl
+
+# Compiled CUDA/C++ output
+*.o
+*.a
+*.so
+*.out
+*.exe
+
+# NVCC intermediate files
+*.ptx
+*.cubin
+*.fatbin
+
+# Nsight profiling output
+*.nsys-rep
+*.qdstrm
+*.sqlite
+
+# Build directories
+build/
+bin/
+obj/
+
+# Simulation output data files
+*.dat
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Cursor
+.cursor/
