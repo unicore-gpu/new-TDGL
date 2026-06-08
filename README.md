@@ -8,6 +8,56 @@ Original code: CUDA Toolkit 3.2, 2011. This rewrite targets CUDA 12 / sm_120.
 
 ---
 
+## Background — what this solves
+
+### The physics
+
+A **type-II superconductor** placed in a magnetic field does not simply expel the
+field (the Meissner state) or go normal. Above a lower critical field **Hc1**, the
+field penetrates the sample as a lattice of quantized **vortices** — tiny tubes of
+normal material each carrying one flux quantum, surrounded by a circulating
+supercurrent. As the field rises, more vortices enter, arranging themselves into a
+triangular **Abrikosov lattice**, until at the upper critical field **Hc2** the
+vortex cores overlap and superconductivity is destroyed. How vortices nucleate at
+the edge, overcome the **Bean–Livingston surface barrier**, move, pin on defects,
+and pack into a lattice governs the magnetic and transport properties of every
+practical superconductor (magnets, cables, RF cavities).
+
+These dynamics have no closed-form solution. The standard way to study them is to
+integrate the **Time-Dependent Ginzburg-Landau (TDGL) equations** — coupled PDEs
+for the complex superconducting order parameter ψ(x,y,t) and the magnetic vector
+potential A(x,y,t) — forward in time on a grid until the system relaxes to
+equilibrium at each applied field. This solver uses the **gauge-invariant
+link-variable discretisation** of Gropp et al. (1996), which preserves gauge
+invariance exactly on the lattice (see `docs/TDGL_paper.md` for the full
+derivation).
+
+### What this repository does
+
+It computes the **magnetisation curve (M–H loop)** and the full spatial structure
+of a 2-D type-II superconductor as an external field is swept, by time-stepping the
+discrete TDGL equations on the GPU. Concretely, for each applied field Ba it:
+
+1. relaxes ψ and A to equilibrium (explicit forward-Euler time stepping),
+2. records the magnetisation, vortex count, and free energy, and
+3. dumps the order parameter |ψ|, induced field Bz, and supercurrent Js maps.
+
+From these you can see vortex entry at Hc1, the Abrikosov lattice in the mixed
+state, and the transition to the normal state at Hc2 — and quantify them
+(M–H curve, vortex positions, hexatic order). See **Results** below.
+
+### Why a GPU rewrite
+
+The TDGL update is a memory-bound, nearest-neighbour stencil applied to a large
+grid over millions of timesteps — an ideal fit for a GPU. The original 2011 code
+targeted the long-obsolete CUDA Toolkit 3.2 and Fermi-era hardware. This repository
+**modernises it for CUDA 12 and NVIDIA Blackwell (RTX 5090, sm_120)**, applying ten
+CUDA optimisations (coalesced layout, shared-memory stencil tiling, kernel fusion,
+dual streams, CUDA Graphs, Blackwell L2 persistence…) to reach **~44 µs/step on a
+256×128 grid**. See `docs/OPTIMIZATION.md`.
+
+---
+
 ## Results
 
 Zero-field-cooled (ZFC) M-H sweep on a 256×128 grid (DX=0.1λ, κ=2),
