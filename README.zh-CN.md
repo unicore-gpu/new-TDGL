@@ -1,6 +1,6 @@
 # GPU TDGL 求解器
 
-[English](README.md) | **简体中文**
+[English](README.md) | **简体中文** | [日本語](README.ja.md)
 
 求解含时 Ginzburg-Landau(Time-Dependent Ginzburg-Landau,TDGL)方程的 CUDA 程序,
 针对 NVIDIA RTX 5090(Blackwell 架构,sm_120)进行了现代化重写。

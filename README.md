@@ -1,6 +1,6 @@
 # GPU TDGL Solver
 
-**English** | [简体中文](README.zh-CN.md)
+**English** | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 CUDA solver for the Time-Dependent Ginzburg-Landau (TDGL) equations,
 modernised for NVIDIA RTX 5090 (Blackwell, sm_120).
